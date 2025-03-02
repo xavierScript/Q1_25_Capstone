@@ -1,5 +1,9 @@
+// use anchor_lang::prelude::*;
+// use anchor_spl::{associated_token::AssociatedToken, token_interface::{Mint, TokenAccount, TokenInterface, TransferChecked, transfer_checked}};
+
 use anchor_lang::prelude::*;
-use anchor_spl::{associated_token::AssociatedToken, token_interface::{Mint, TokenAccount, TokenInterface, TransferChecked, transfer_checked}};
+use anchor_spl::{associated_token::AssociatedToken, token::{Mint, TokenAccount, Token, TransferChecked, transfer_checked}};
+use anchor_spl::token_interface::TokenInterface;
 
 use crate::state::Escrow;
 
@@ -8,13 +12,13 @@ use crate::state::Escrow;
 pub struct Make<'info> {
     #[account(mut)]
     pub maker: Signer<'info>,
-    pub mint_a: InterfaceAccount<'info, Mint>,
+    pub mint_a: Account<'info, Mint>,
     #[account(
         mut,
         associated_token::mint = mint_a,
         associated_token::authority = maker,
     )]
-    pub maker_ata_a: InterfaceAccount<'info, TokenAccount>,
+    pub maker_ata_a: Account<'info, TokenAccount>,
     #[account(
         init,
         payer = maker,
@@ -29,7 +33,7 @@ pub struct Make<'info> {
         associated_token::mint = mint_a,
         associated_token::authority = escrow,
     )]
-    pub vault: InterfaceAccount<'info, TokenAccount>,
+    pub vault: Account<'info, TokenAccount>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>,

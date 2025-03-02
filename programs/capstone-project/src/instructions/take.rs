@@ -1,5 +1,9 @@
+// use anchor_lang::prelude::*;
+// use anchor_spl::{associated_token::AssociatedToken, token_interface::{close_account, transfer_checked, CloseAccount, Mint, TokenAccount, TokenInterface, TransferChecked, Transfer}};
+
 use anchor_lang::prelude::*;
-use anchor_spl::{associated_token::AssociatedToken, token_interface::{close_account, transfer_checked, CloseAccount, Mint, TokenAccount, TokenInterface, TransferChecked, Transfer}};
+use anchor_spl::{associated_token::AssociatedToken, token::{close_account, transfer_checked, CloseAccount, Mint, TokenAccount, Token, TransferChecked}};
+use anchor_spl::token_interface::TokenInterface;
 
 use crate::state::escrow::Escrow;
 use crate::errors::EscrowError;
@@ -12,14 +16,14 @@ pub struct Take<'info> {
     pub taker: Signer<'info>,
     #[account(mut)]
     pub maker: SystemAccount<'info>,
-    pub mint_a: InterfaceAccount<'info, Mint>,
+    pub mint_a: Account<'info, Mint>,
     #[account(
         init_if_needed,
         payer = taker,
         associated_token::mint = mint_a,
         associated_token::authority = taker,
     )]
-    pub taker_ata_a: InterfaceAccount<'info, TokenAccount>,
+    pub taker_ata_a: Account<'info, TokenAccount>,
     #[account(
         mut,
         close = maker,
@@ -36,7 +40,7 @@ pub struct Take<'info> {
     associated_token::mint = mint_a,
     associated_token::authority = escrow,
     )]
-    pub vault: InterfaceAccount<'info, TokenAccount>,
+    pub vault: Account<'info, TokenAccount>,
     pub associated_token_program: Program<'info, AssociatedToken>,
     pub token_program: Interface<'info, TokenInterface>,
     pub system_program: Program<'info, System>,
